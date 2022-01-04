@@ -30,6 +30,7 @@ let config = {
   useCustomNames: null,
   deleteDuplicates: null,
   generateMetadata: null,
+  numberOfUniqueImages: null,
 };
 let argv = require('minimist')(process.argv.slice(2));
 
@@ -72,6 +73,7 @@ async function main() {
   if (config.generateMetadata) {
     await metadataSettings();
   }
+  await customUniqueTraitsPrompt();
   const loadingDirectories = ora('Loading traits');
   loadingDirectories.color = 'yellow';
   loadingDirectories.start();
@@ -287,6 +289,20 @@ async function customNamesPrompt() {
     config.useCustomNames = useCustomNames;
 }
 
+////SELECT IF WE WANT TO SET UNIQUE PROPERTIES TO MORE THAN 1
+async function customUniqueTraitsPrompt() {
+  if (config.numberOfUniqueImages !== null) return;
+  let { numberOfUniqueImages } = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'numberOfUniqueImages',
+      message: 'How many unique traits should be generated?',
+      default:1
+    },
+  ]);
+  config.numberOfUniqueImages = parseInt(numberOfUniqueImages);
+}
+
 //SET NAMES FOR EVERY TRAIT
 async function setNames(trait) {
   if (config.useCustomNames) {
@@ -375,7 +391,7 @@ async function generateImages() {
         images.push(basePath + traits[id] + '/' + pickedImg);
       });
 
-      if (existCombination(images)) {
+      if (config.numberOfUniqueImages == 1 ? existCombination(images) : existCombinationCustomUnique(images)) {
         noMoreMatches++;
         images = [];
       } else {
@@ -438,6 +454,29 @@ function existCombination(contains) {
     if (isEqual) exists = true;
   });
   return exists;
+}
+
+function existCombinationCustomUnique(contains) {
+  let similar = false;
+  seen.forEach((array, index) => {
+    getSimilar();
+    if (array.length === contains.length && similar) {
+      return;
+    }
+    function getSimilar() {
+      let count = 0;
+      array.forEach((value, index) => {
+        if (value !== contains[index]) {
+          count++;
+        }
+      });
+
+      if (count < config.numberOfUniqueImages) {
+        similar = true;
+      }
+    }
+  });
+  return similar;
 }
 
 function generateMetadataObject(id, images) {
