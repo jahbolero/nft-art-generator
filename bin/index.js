@@ -423,6 +423,52 @@ async function generateImages() {
   }
 }
 
+//GENARATE IMAGES
+async function generateGifs() {
+  let noMoreMatches = 0;
+  let images = [];
+  let id = 0;
+  await generateWeightedTraits();
+  if (config.deleteDuplicates) {
+    while (!Object.values(weightedTraits).filter(arr => arr.length == 0).length && noMoreMatches < 20000) {
+      let picked = [];
+      order.forEach(id => {
+        let pickedImgId = pickRandom(weightedTraits[id]);
+        picked.push(pickedImgId);
+        let pickedImg = weightedTraits[id][pickedImgId];
+        images.push(basePath + traits[id] + '/' + pickedImg);
+      });
+
+      if (config.numberOfUniqueImages == 1 ? existCombination(images) : existCombinationCustomUnique(images)) {
+        noMoreMatches++;
+        images = [];
+      } else {
+        generateMetadataObject(id, images);
+        noMoreMatches = 0;
+        order.forEach((id, i) => {
+          remove(weightedTraits[id], picked[i]);
+        });
+        seen.push(images);
+        generateGif(images, outputPath + `${id}.gif`);
+        images = [];
+        id++;
+      }
+    }
+  } else {
+    while (!Object.values(weightedTraits).filter(arr => arr.length == 0).length) {
+      order.forEach(id => {
+        images.push(
+          basePath + traits[id] + '/' + pickRandomAndRemove(weightedTraits[id])
+        );
+      });
+      generateMetadataObject(id, images);
+      generateGif(images, outputPath + `${id}.gif`);
+      images = [];
+      id++;
+    }
+  }
+}
+
 //GENERATES RANDOM NUMBER BETWEEN A MAX AND A MIN VALUE
 function randomNumber(min, max) {
   return Math.round(Math.random() * (max - min) + min);
@@ -525,4 +571,46 @@ async function writeConfig() {
 
 async function getFilesForTrait(trait) {
   return (await readdir(basePath + '/' + trait)).filter(file => file !== '.DS_Store');
+}
+
+function generateGif(images, output) {
+  var spawn = require('child_process').spawnSync;
+  var args = buildCommand(images,output);
+  var composite = spawn('convert', args);
+  composite.stderr.on('data', function (data) {
+    console.log('stderr: ' + data);
+  });
+}
+
+function buildCommand(images, output) {
+  image = JSON.parse(
+    JSON.stringify(images).replace(/\//g, '\\\\').replace(/\\/g, '\\\\')
+  );
+  let command = [];
+  command.push(`(`);
+  command.push(`${images[0]}`);
+  command.push(`-coalesce`);
+  command.push(`)`);
+  command.push(`null:`);
+  command.push(`(`);
+  command.push(`${images[1]}`);
+  command.push(`-coalesce`);
+  command.push(`)`);
+  command.push(`-gravity`);
+  command.push(`center`);
+  command.push(`-layers`);
+  command.push(`composite`);
+  for (var i = 2; i < images.length; i++) {
+    command.push(`null:`);
+    command.push(`(`);
+    command.push(`${images[i]}`);
+    command.push(`-coalesce`);
+    command.push(`)`);
+    command.push(`-gravity`);
+    command.push(`center`);
+    command.push(`-layers`);
+    command.push(`composite`);
+  }
+  command.push(output);
+  return command;
 }
