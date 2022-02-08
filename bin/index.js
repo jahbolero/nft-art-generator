@@ -11,7 +11,7 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const { readFile, writeFile, readdir } = require('fs').promises;
 const mergeImages = require('merge-images');
-const { Image, Canvas } = require('canvas');
+// const { Image, Canvas } = require('canvas');
 const ImageDataURI = require('image-data-uri');
 const sharp = require('sharp');
 
@@ -95,7 +95,9 @@ async function main() {
   const generatingImages = ora('Generating images');
   generatingImages.color = 'yellow';
   generatingImages.start();
+  console.log('Start Time '+new Date().toLocaleString());
   await generateImages();
+  console.log('End Time '+new Date().toLocaleString());
   await sleep(2);
   generatingImages.succeed('All images generated!');
   generatingImages.clear();
@@ -413,13 +415,14 @@ async function generateImages() {
           remove(weightedTraits[id], picked[i]);
         });
         seen.push(images);
-        const b64 = await mergeImages(images, { Canvas: Canvas, Image: Image });
-        await ImageDataURI.outputFile(b64, outputPath + `${id}.png`);
+        // const b64 = await mergeImages(images, { Canvas: Canvas, Image: Image });
+        // await ImageDataURI.outputFile(b64, outputPath + `${id}.png`);
+        compositeImage(images,id);
         images = [];
         id++;
       }
-      console.log(id);
     }
+    console.log(id);
   } else {
     while (
       !Object.values(weightedTraits).filter((arr) => arr.length == 0).length
@@ -430,8 +433,9 @@ async function generateImages() {
         );
       });
       generateMetadataObject(id, images);
-      const b64 = await mergeImages(images, { Canvas: Canvas, Image: Image });
-      await ImageDataURI.outputFile(b64, outputPath + `${id}.png`);
+      // const b64 = await mergeImages(images, { Canvas: Canvas, Image: Image });
+        // await ImageDataURI.outputFile(b64, outputPath + `${id}.png`);
+        compositeImage(images,id);
       images = [];
       id++;
     }
@@ -639,12 +643,12 @@ function buildCommand(images, output) {
   return command;
 }
 
-const compositeImage = (images) => {
+const compositeImage = async (images, id) => {
   let inputArray = [];
-  for (var i = 1; i < images; i++) {
+  for (var i = 1; i < images.length; i++) {
     inputArray.push({ input: `${images[i]}` });
   }
-  sharp(`${images[i]}`)
+  sharp(`${images[0]}`)
     .composite(inputArray)
-    .toFile(outputPath + `/${id}.png`);
+    .toFile(outputPath + `${id}.png`);
 };
