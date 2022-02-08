@@ -611,7 +611,7 @@ const compositeImage = async (images, id) => {
     .toFile(outputPath + `${id}.png`);
 };
 
-const compositeGif = async (images) => {
+const compositeGif = async (images,id) => {
   console.log(images);
   let inputArray = [];
   for (var i = 1; i < images.length; i++) {
@@ -619,5 +619,5 @@ const compositeGif = async (images) => {
   }
   sharp(`${images[0]}`, { animated: true })
     .composite(inputArray)
-    .toFile(`${'test'}.gif`);
+    .toFile(outputPath + `${id}.gif`);
 };
