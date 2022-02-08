@@ -417,7 +417,7 @@ async function generateImages() {
         seen.push(images);
         // const b64 = await mergeImages(images, { Canvas: Canvas, Image: Image });
         // await ImageDataURI.outputFile(b64, outputPath + `${id}.png`);
-        compositeImage(images,id);
+        await compositeImage(images,id);
         images = [];
         id++;
       }
@@ -435,7 +435,7 @@ async function generateImages() {
       generateMetadataObject(id, images);
       // const b64 = await mergeImages(images, { Canvas: Canvas, Image: Image });
         // await ImageDataURI.outputFile(b64, outputPath + `${id}.png`);
-        compositeImage(images,id);
+      await compositeImage(images,id);
       images = [];
       id++;
     }
@@ -648,7 +648,7 @@ const compositeImage = async (images, id) => {
   for (var i = 1; i < images.length; i++) {
     inputArray.push({ input: `${images[i]}` });
   }
-  sharp(`${images[0]}`)
+  await sharp(`${images[0]}`)
     .composite(inputArray)
     .toFile(outputPath + `${id}.png`);
 };
