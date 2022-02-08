@@ -601,48 +601,6 @@ async function getFilesForTrait(trait) {
   );
 }
 
-function generateGif(images, output) {
-  var spawn = require('child_process').spawnSync;
-  var args = buildCommand(images, output);
-  var composite = spawn('convert', args);
-  composite.stderr.on('data', function (data) {
-    console.log('stderr: ' + data);
-  });
-}
-
-function buildCommand(images, output) {
-  image = JSON.parse(
-    JSON.stringify(images).replace(/\//g, '\\\\').replace(/\\/g, '\\\\')
-  );
-  let command = [];
-  command.push(`(`);
-  command.push(`${images[0]}`);
-  command.push(`-coalesce`);
-  command.push(`)`);
-  command.push(`null:`);
-  command.push(`(`);
-  command.push(`${images[1]}`);
-  command.push(`-coalesce`);
-  command.push(`)`);
-  command.push(`-gravity`);
-  command.push(`center`);
-  command.push(`-layers`);
-  command.push(`composite`);
-  for (var i = 2; i < images.length; i++) {
-    command.push(`null:`);
-    command.push(`(`);
-    command.push(`${images[i]}`);
-    command.push(`-coalesce`);
-    command.push(`)`);
-    command.push(`-gravity`);
-    command.push(`center`);
-    command.push(`-layers`);
-    command.push(`composite`);
-  }
-  command.push(output);
-  return command;
-}
-
 const compositeImage = async (images, id) => {
   let inputArray = [];
   for (var i = 1; i < images.length; i++) {
@@ -651,4 +609,15 @@ const compositeImage = async (images, id) => {
   await sharp(`${images[0]}`)
     .composite(inputArray)
     .toFile(outputPath + `${id}.png`);
+};
+
+const compositeGif = async (images) => {
+  console.log(images);
+  let inputArray = [];
+  for (var i = 1; i < images.length; i++) {
+    inputArray.push({ input: `${images[i]}`, animated: true });
+  }
+  sharp(`${images[0]}`, { animated: true })
+    .composite(inputArray)
+    .toFile(`${'test'}.gif`);
 };
