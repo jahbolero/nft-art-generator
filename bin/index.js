@@ -9,10 +9,11 @@ const boxen = require('boxen');
 const ora = require('ora');
 const inquirer = require('inquirer');
 const fs = require('fs');
-const { readFile, writeFile, readdir } = require("fs").promises;
+const { readFile, writeFile, readdir } = require('fs').promises;
 const mergeImages = require('merge-images');
 const { Image, Canvas } = require('canvas');
 const ImageDataURI = require('image-data-uri');
+const sharp = require('sharp');
 
 //SETTINGS
 let basePath;
@@ -35,13 +36,14 @@ let config = {
 let argv = require('minimist')(process.argv.slice(2));
 
 //DEFINITIONS
-const getDirectories = source =>
+const getDirectories = (source) =>
   fs
     .readdirSync(source, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name);
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => dirent.name);
 
-const sleep = seconds => new Promise(resolve => setTimeout(resolve, seconds * 1000))
+const sleep = (seconds) =>
+  new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 
 //OPENING
 console.log(
@@ -84,10 +86,10 @@ async function main() {
   loadingDirectories.clear();
   await traitsOrder(true);
   await customNamesPrompt();
-  await asyncForEach(traits, async trait => {
+  await asyncForEach(traits, async (trait) => {
     await setNames(trait);
   });
-  await asyncForEach(traits, async trait => {
+  await asyncForEach(traits, async (trait) => {
     await setWeights(trait);
   });
   const generatingImages = ora('Generating images');
@@ -119,7 +121,7 @@ async function main() {
 
 //GET THE BASEPATH FOR THE IMAGES
 async function getBasePath() {
-  if (config.basePath !== undefined) { 
+  if (config.basePath !== undefined) {
     basePath = config.basePath;
     return;
   }
@@ -154,7 +156,7 @@ async function getBasePath() {
 //GET THE OUTPUTPATH FOR THE IMAGES
 async function getOutputPath() {
   if (config.outputPath !== undefined) {
-    outputPath = config.outputPath
+    outputPath = config.outputPath;
     return;
   }
   const { output_path } = await inquirer.prompt([
@@ -256,7 +258,7 @@ async function traitsOrder(isFirst) {
   };
   traitsPrompt.message = 'Which trait should be on top of that?';
   if (isFirst === true) traitsPrompt.message = 'Which trait is the background?';
-  traitsToSort.forEach(trait => {
+  traitsToSort.forEach((trait) => {
     const globalIndex = traits.indexOf(trait);
     traitsPrompt.choices.push({
       name: trait.toUpperCase(),
@@ -274,19 +276,19 @@ async function traitsOrder(isFirst) {
 
 //SELECT IF WE WANT TO SET CUSTOM NAMES FOR EVERY TRAITS OR USE FILENAMES
 async function customNamesPrompt() {
-    if (config.useCustomNames !== null) return;
-    let { useCustomNames } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'useCustomNames',
-        message: 'How should be constructed the names of the traits?',
-        choices: [
-          { name: 'Use filenames as traits names', value: 0 },
-          { name: 'Choose custom names for each trait', value: 1 },
-        ],
-      },
-    ]);
-    config.useCustomNames = useCustomNames;
+  if (config.useCustomNames !== null) return;
+  let { useCustomNames } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'useCustomNames',
+      message: 'How should be constructed the names of the traits?',
+      choices: [
+        { name: 'Use filenames as traits names', value: 0 },
+        { name: 'Choose custom names for each trait', value: 1 },
+      ],
+    },
+  ]);
+  config.useCustomNames = useCustomNames;
 }
 
 ////SELECT IF WE WANT TO SET UNIQUE PROPERTIES TO MORE THAN 1
@@ -297,7 +299,7 @@ async function customUniqueTraitsPrompt() {
       type: 'input',
       name: 'numberOfUniqueImages',
       message: 'How many unique traits should be generated?',
-      default:1
+      default: 1,
     },
   ]);
   config.numberOfUniqueImages = parseInt(numberOfUniqueImages);
@@ -322,7 +324,7 @@ async function setNames(trait) {
       if (config.names && config.names[file] !== undefined) return;
       names[file] = selectedNames[trait + '_name_' + i];
     });
-    config.names = {...config.names, ...names};
+    config.names = { ...config.names, ...names };
   } else {
     const files = fs.readdirSync(basePath + '/' + trait);
     files.forEach((file, i) => {
@@ -333,7 +335,10 @@ async function setNames(trait) {
 
 //SET WEIGHTS FOR EVERY TRAIT
 async function setWeights(trait) {
-  if (config.weights && Object.keys(config.weights).length === Object.keys(names).length ) {
+  if (
+    config.weights &&
+    Object.keys(config.weights).length === Object.keys(names).length
+  ) {
     weights = config.weights;
     return;
   }
@@ -366,7 +371,7 @@ async function generateWeightedTraits() {
   for (const trait of traits) {
     const traitWeights = [];
     const files = await getFilesForTrait(trait);
-    files.forEach(file => {
+    files.forEach((file) => {
       for (let i = 0; i < weights[file]; i++) {
         traitWeights.push(file);
       }
@@ -382,16 +387,23 @@ async function generateImages() {
   let id = 0;
   await generateWeightedTraits();
   if (config.deleteDuplicates) {
-    while (!Object.values(weightedTraits).filter(arr => arr.length == 0).length && noMoreMatches < 20000) {
+    while (
+      !Object.values(weightedTraits).filter((arr) => arr.length == 0).length &&
+      noMoreMatches < 20000
+    ) {
       let picked = [];
-      order.forEach(id => {
+      order.forEach((id) => {
         let pickedImgId = pickRandom(weightedTraits[id]);
         picked.push(pickedImgId);
         let pickedImg = weightedTraits[id][pickedImgId];
         images.push(basePath + traits[id] + '/' + pickedImg);
       });
 
-      if (config.numberOfUniqueImages == 1 ? existCombination(images) : existCombinationCustomUnique(images)) {
+      if (
+        config.numberOfUniqueImages == 1
+          ? existCombination(images)
+          : existCombinationCustomUnique(images)
+      ) {
         noMoreMatches++;
         images = [];
       } else {
@@ -406,10 +418,13 @@ async function generateImages() {
         images = [];
         id++;
       }
+      console.log(id);
     }
   } else {
-    while (!Object.values(weightedTraits).filter(arr => arr.length == 0).length) {
-      order.forEach(id => {
+    while (
+      !Object.values(weightedTraits).filter((arr) => arr.length == 0).length
+    ) {
+      order.forEach((id) => {
         images.push(
           basePath + traits[id] + '/' + pickRandomAndRemove(weightedTraits[id])
         );
@@ -430,16 +445,23 @@ async function generateGifs() {
   let id = 0;
   await generateWeightedTraits();
   if (config.deleteDuplicates) {
-    while (!Object.values(weightedTraits).filter(arr => arr.length == 0).length && noMoreMatches < 20000) {
+    while (
+      !Object.values(weightedTraits).filter((arr) => arr.length == 0).length &&
+      noMoreMatches < 20000
+    ) {
       let picked = [];
-      order.forEach(id => {
+      order.forEach((id) => {
         let pickedImgId = pickRandom(weightedTraits[id]);
         picked.push(pickedImgId);
         let pickedImg = weightedTraits[id][pickedImgId];
         images.push(basePath + traits[id] + '/' + pickedImg);
       });
 
-      if (config.numberOfUniqueImages == 1 ? existCombination(images) : existCombinationCustomUnique(images)) {
+      if (
+        config.numberOfUniqueImages == 1
+          ? existCombination(images)
+          : existCombinationCustomUnique(images)
+      ) {
         noMoreMatches++;
         images = [];
       } else {
@@ -455,8 +477,10 @@ async function generateGifs() {
       }
     }
   } else {
-    while (!Object.values(weightedTraits).filter(arr => arr.length == 0).length) {
-      order.forEach(id => {
+    while (
+      !Object.values(weightedTraits).filter((arr) => arr.length == 0).length
+    ) {
+      order.forEach((id) => {
         images.push(
           basePath + traits[id] + '/' + pickRandomAndRemove(weightedTraits[id])
         );
@@ -493,7 +517,7 @@ function remove(array, toPick) {
 
 function existCombination(contains) {
   let exists = false;
-  seen.forEach(array => {
+  seen.forEach((array) => {
     let isEqual =
       array.length === contains.length &&
       array.every((value, index) => value === contains[index]);
@@ -543,24 +567,22 @@ function generateMetadataObject(id, images) {
 }
 
 async function writeMetadata() {
-  if(config.metaData.splitFiles)
-  {
-    let metadata_output_dir = outputPath + "metadata/"
+  if (config.metaData.splitFiles) {
+    let metadata_output_dir = outputPath + 'metadata/';
     if (!fs.existsSync(metadata_output_dir)) {
       fs.mkdirSync(metadata_output_dir, { recursive: true });
     }
-    for (var key in metaData){
+    for (var key in metaData) {
       await writeFile(metadata_output_dir + key, JSON.stringify(metaData[key]));
     }
-  }else
-  {
+  } else {
     await writeFile(outputPath + 'metadata.json', JSON.stringify(metaData));
   }
 }
 
 async function loadConfig() {
   try {
-    const data = await readFile('config.json')
+    const data = await readFile('config.json');
     config = JSON.parse(data.toString());
   } catch (error) {}
 }
@@ -570,12 +592,14 @@ async function writeConfig() {
 }
 
 async function getFilesForTrait(trait) {
-  return (await readdir(basePath + '/' + trait)).filter(file => file !== '.DS_Store');
+  return (await readdir(basePath + '/' + trait)).filter(
+    (file) => file !== '.DS_Store'
+  );
 }
 
 function generateGif(images, output) {
   var spawn = require('child_process').spawnSync;
-  var args = buildCommand(images,output);
+  var args = buildCommand(images, output);
   var composite = spawn('convert', args);
   composite.stderr.on('data', function (data) {
     console.log('stderr: ' + data);
@@ -614,3 +638,13 @@ function buildCommand(images, output) {
   command.push(output);
   return command;
 }
+
+const compositeImage = (images) => {
+  let inputArray = [];
+  for (var i = 1; i < images; i++) {
+    inputArray.push({ input: `${images[i]}` });
+  }
+  sharp(`${images[i]}`)
+    .composite(inputArray)
+    .toFile(outputPath + `/${id}.png`);
+};
