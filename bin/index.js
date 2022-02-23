@@ -308,7 +308,7 @@ async function customUniqueTraitsPrompt() {
 
 ////SELECT IF WE WANT TO SET THE START ID
 async function customStartIdPrompt() {
-  if (config.startId !== null) return;
+  if (config.startId !== null && config.startId != undefined) return;
   let { startId } = await inquirer.prompt([
     {
       type: 'input',
