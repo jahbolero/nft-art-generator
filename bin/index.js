@@ -10,9 +10,6 @@ const ora = require('ora');
 const inquirer = require('inquirer');
 const fs = require('fs');
 const { readFile, writeFile, readdir } = require('fs').promises;
-const mergeImages = require('merge-images');
-// const { Image, Canvas } = require('canvas');
-const ImageDataURI = require('image-data-uri');
 const sharp = require('sharp');
 
 //SETTINGS
