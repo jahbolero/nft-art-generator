@@ -32,6 +32,7 @@ let config = {
   deleteDuplicates: null,
   generateMetadata: null,
   numberOfUniqueImages: null,
+  startId: null,
 };
 let argv = require('minimist')(process.argv.slice(2));
 
@@ -76,6 +77,7 @@ async function main() {
     await metadataSettings();
   }
   await customUniqueTraitsPrompt();
+  await customStartIdPrompt();
   const loadingDirectories = ora('Loading traits');
   loadingDirectories.color = 'yellow';
   loadingDirectories.start();
@@ -95,9 +97,9 @@ async function main() {
   const generatingImages = ora('Generating images');
   generatingImages.color = 'yellow';
   generatingImages.start();
-  console.log('Start Time '+new Date().toLocaleString());
+  console.log('Start Time ' + new Date().toLocaleString());
   await generateImages();
-  console.log('End Time '+new Date().toLocaleString());
+  console.log('End Time ' + new Date().toLocaleString());
   await sleep(2);
   generatingImages.succeed('All images generated!');
   generatingImages.clear();
@@ -307,6 +309,20 @@ async function customUniqueTraitsPrompt() {
   config.numberOfUniqueImages = parseInt(numberOfUniqueImages);
 }
 
+////SELECT IF WE WANT TO SET THE START ID
+async function customStartIdPrompt() {
+  if (config.startId !== null) return;
+  let { startId } = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'startId',
+      message: 'What should be the starting ID number?',
+      default: 0,
+    },
+  ]);
+  config.startId = parseInt(startId);
+}
+
 //SET NAMES FOR EVERY TRAIT
 async function setNames(trait) {
   if (config.useCustomNames) {
@@ -386,7 +402,7 @@ async function generateWeightedTraits() {
 async function generateImages() {
   let noMoreMatches = 0;
   let images = [];
-  let id = 0;
+  let id = config.startId;
   await generateWeightedTraits();
   if (config.deleteDuplicates) {
     while (
@@ -417,7 +433,7 @@ async function generateImages() {
         seen.push(images);
         // const b64 = await mergeImages(images, { Canvas: Canvas, Image: Image });
         // await ImageDataURI.outputFile(b64, outputPath + `${id}.png`);
-        await compositeImage(images,id);
+        await compositeImage(images, id);
         images = [];
         id++;
       }
@@ -434,8 +450,8 @@ async function generateImages() {
       });
       generateMetadataObject(id, images);
       // const b64 = await mergeImages(images, { Canvas: Canvas, Image: Image });
-        // await ImageDataURI.outputFile(b64, outputPath + `${id}.png`);
-      await compositeImage(images,id);
+      // await ImageDataURI.outputFile(b64, outputPath + `${id}.png`);
+      await compositeImage(images, id);
       images = [];
       id++;
     }
@@ -609,15 +625,4 @@ const compositeImage = async (images, id) => {
   await sharp(`${images[0]}`)
     .composite(inputArray)
     .toFile(outputPath + `${id}.png`);
-};
-
-const compositeGif = async (images,id) => {
-  console.log(images);
-  let inputArray = [];
-  for (var i = 1; i < images.length; i++) {
-    inputArray.push({ input: `${images[i]}`, animated: true });
-  }
-  sharp(`${images[0]}`, { animated: true })
-    .composite(inputArray)
-    .toFile(outputPath + `${id}.gif`);
 };

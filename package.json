@@ -1,6 +1,6 @@
 {
   "name": "@jakedibolero/nft-art-generator",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A tool to generate generative NFT art projects.",
   "main": "bin/index.js",
   "repository": "https://github.com/NotLuksus/nft-art-generator",
@@ -22,6 +22,6 @@
     "merge-images": "^2.0.0",
     "minimist": "^1.2.5",
     "ora": "^5.4.1",
-    "sharp": "^0.30.0"
+    "sharp": "^0.30.1"
   }
 }
