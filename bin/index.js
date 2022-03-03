@@ -30,6 +30,7 @@ let config = {
   generateMetadata: null,
   numberOfUniqueImages: null,
   startId: null,
+  extension: 'png',
 };
 let argv = require('minimist')(process.argv.slice(2));
 
@@ -576,10 +577,12 @@ function generateMetadataObject(id, images) {
   images.forEach((image, i) => {
     let pathArray = image.split('/');
     let fileToMap = pathArray[pathArray.length - 1];
-    metaData[id].attributes.push({
-      trait_type: traits[order[i]],
-      value: names[fileToMap],
-    });
+    if (!names[fileToMap].includes('REDACTED')) {
+      metaData[id].attributes.push({
+        trait_type: traits[order[i]],
+        value: names[fileToMap],
+      });
+    }
   });
 }
 
@@ -621,5 +624,7 @@ const compositeImage = async (images, id) => {
   }
   await sharp(`${images[0]}`)
     .composite(inputArray)
-    .toFile(outputPath + `${id}.png`);
+    .toFile(
+      outputPath + `${id}.${config.extension ? config.extension : 'png'}`
+    );
 };
