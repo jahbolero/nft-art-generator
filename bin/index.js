@@ -4,13 +4,13 @@
 //CHECK FOR TRAILING SLASHES ON ALL INPUTS
 
 //IMPORTS
-const chalk = require('chalk');
-const boxen = require('boxen');
-const ora = require('ora');
-const inquirer = require('inquirer');
-const fs = require('fs');
-const { readFile, writeFile, readdir } = require('fs').promises;
-const sharp = require('sharp');
+const chalk = require("chalk");
+const boxen = require("boxen");
+const ora = require("ora");
+const inquirer = require("inquirer");
+const fs = require("fs");
+const { readFile, writeFile, readdir } = require("fs").promises;
+const sharp = require("sharp");
 
 //SETTINGS
 let basePath;
@@ -31,7 +31,7 @@ let config = {
   numberOfUniqueImages: null,
   startId: null,
 };
-let argv = require('minimist')(process.argv.slice(2));
+let argv = require("minimist")(process.argv.slice(2));
 
 //DEFINITIONS
 const getDirectories = (source) =>
@@ -47,19 +47,19 @@ const sleep = (seconds) =>
 console.log(
   boxen(
     chalk.blue(
-      ' /$$   /$$ /$$$$$$$$ /$$$$$$$$        /$$$$$$  /$$$$$$$  /$$$$$$$$        /$$$$$$  /$$$$$$$$ /$$   /$$ /$$$$$$$$ /$$$$$$$   /$$$$$$  /$$$$$$$$ /$$$$$$  /$$$$$$$ \n' +
-        '| $$$ | $$| $$_____/|__  $$__/       /$$__  $$| $$__  $$|__  $$__/       /$$__  $$| $$_____/| $$$ | $$| $$_____/| $$__  $$ /$$__  $$|__  $$__//$$__  $$| $$__  $$\n' +
-        '| $$$$| $$| $$         | $$         | $$  \\ $$| $$  \\ $$   | $$         | $$  \\__/| $$      | $$$$| $$| $$      | $$  \\ $$| $$  \\ $$   | $$  | $$  \\ $$| $$  \\ $$\n' +
-        '| $$ $$ $$| $$$$$      | $$         | $$$$$$$$| $$$$$$$/   | $$         | $$ /$$$$| $$$$$   | $$ $$ $$| $$$$$   | $$$$$$$/| $$$$$$$$   | $$  | $$  | $$| $$$$$$$/\n' +
-        '| $$  $$$$| $$__/      | $$         | $$__  $$| $$__  $$   | $$         | $$|_  $$| $$__/   | $$  $$$$| $$__/   | $$__  $$| $$__  $$   | $$  | $$  | $$| $$__  $$\n' +
-        '| $$\\  $$$| $$         | $$         | $$  | $$| $$  \\ $$   | $$         | $$  \\ $$| $$      | $$\\  $$$| $$      | $$  \\ $$| $$  | $$   | $$  | $$  | $$| $$  \\ $$\n' +
-        '| $$ \\  $$| $$         | $$         | $$  | $$| $$  | $$   | $$         |  $$$$$$/| $$$$$$$$| $$ \\  $$| $$$$$$$$| $$  | $$| $$  | $$   | $$  |  $$$$$$/| $$  | $$\n' +
-        '|__/  \\__/|__/         |__/         |__/  |__/|__/  |__/   |__/          \\______/ |________/|__/  \\__/|________/|__/  |__/|__/  |__/   |__/   \\______/ |__/  |__/\n \n' +
-        'Made with '
+      " /$$   /$$ /$$$$$$$$ /$$$$$$$$        /$$$$$$  /$$$$$$$  /$$$$$$$$        /$$$$$$  /$$$$$$$$ /$$   /$$ /$$$$$$$$ /$$$$$$$   /$$$$$$  /$$$$$$$$ /$$$$$$  /$$$$$$$ \n" +
+        "| $$$ | $$| $$_____/|__  $$__/       /$$__  $$| $$__  $$|__  $$__/       /$$__  $$| $$_____/| $$$ | $$| $$_____/| $$__  $$ /$$__  $$|__  $$__//$$__  $$| $$__  $$\n" +
+        "| $$$$| $$| $$         | $$         | $$  \\ $$| $$  \\ $$   | $$         | $$  \\__/| $$      | $$$$| $$| $$      | $$  \\ $$| $$  \\ $$   | $$  | $$  \\ $$| $$  \\ $$\n" +
+        "| $$ $$ $$| $$$$$      | $$         | $$$$$$$$| $$$$$$$/   | $$         | $$ /$$$$| $$$$$   | $$ $$ $$| $$$$$   | $$$$$$$/| $$$$$$$$   | $$  | $$  | $$| $$$$$$$/\n" +
+        "| $$  $$$$| $$__/      | $$         | $$__  $$| $$__  $$   | $$         | $$|_  $$| $$__/   | $$  $$$$| $$__/   | $$__  $$| $$__  $$   | $$  | $$  | $$| $$__  $$\n" +
+        "| $$\\  $$$| $$         | $$         | $$  | $$| $$  \\ $$   | $$         | $$  \\ $$| $$      | $$\\  $$$| $$      | $$  \\ $$| $$  | $$   | $$  | $$  | $$| $$  \\ $$\n" +
+        "| $$ \\  $$| $$         | $$         | $$  | $$| $$  | $$   | $$         |  $$$$$$/| $$$$$$$$| $$ \\  $$| $$$$$$$$| $$  | $$| $$  | $$   | $$  |  $$$$$$/| $$  | $$\n" +
+        "|__/  \\__/|__/         |__/         |__/  |__/|__/  |__/   |__/          \\______/ |________/|__/  \\__/|________/|__/  |__/|__/  |__/   |__/   \\______/ |__/  |__/\n \n" +
+        "Made with "
     ) +
-      chalk.red('❤') +
-      chalk.blue(' by NotLuksus'),
-    { borderColor: 'red', padding: 3 }
+      chalk.red("❤") +
+      chalk.blue(" by NotLuksus"),
+    { borderColor: "red", padding: 3 }
   )
 );
 main();
@@ -75,8 +75,8 @@ async function main() {
   }
   await customUniqueTraitsPrompt();
   await customStartIdPrompt();
-  const loadingDirectories = ora('Loading traits');
-  loadingDirectories.color = 'yellow';
+  const loadingDirectories = ora("Loading traits");
+  loadingDirectories.color = "yellow";
   loadingDirectories.start();
   traits = getDirectories(basePath);
   traitsToSort = [...traits];
@@ -91,31 +91,31 @@ async function main() {
   await asyncForEach(traits, async (trait) => {
     await setWeights(trait);
   });
-  const generatingImages = ora('Generating images');
-  generatingImages.color = 'yellow';
+  const generatingImages = ora("Generating images");
+  generatingImages.color = "yellow";
   generatingImages.start();
-  console.log('Start Time ' + new Date().toLocaleString());
+  console.log("Start Time " + new Date().toLocaleString());
   await generateImages();
-  console.log('End Time ' + new Date().toLocaleString());
+  console.log("End Time " + new Date().toLocaleString());
   await sleep(2);
-  generatingImages.succeed('All images generated!');
+  generatingImages.succeed("All images generated!");
   generatingImages.clear();
   if (config.generateMetadata) {
-    const writingMetadata = ora('Exporting metadata');
-    writingMetadata.color = 'yellow';
+    const writingMetadata = ora("Exporting metadata");
+    writingMetadata.color = "yellow";
     writingMetadata.start();
     await writeMetadata();
     await sleep(0.5);
-    writingMetadata.succeed('Exported metadata successfully');
+    writingMetadata.succeed("Exported metadata successfully");
     writingMetadata.clear();
   }
-  if (argv['save-config']) {
-    const writingConfig = ora('Saving configuration');
-    writingConfig.color = 'yellow';
+  if (argv["save-config"]) {
+    const writingConfig = ora("Saving configuration");
+    writingConfig.color = "yellow";
     writingConfig.start();
     await writeConfig();
     await sleep(0.5);
-    writingConfig.succeed('Saved configuration successfully');
+    writingConfig.succeed("Saved configuration successfully");
     writingConfig.clear();
   }
 }
@@ -128,28 +128,28 @@ async function getBasePath() {
   }
   const { base_path } = await inquirer.prompt([
     {
-      type: 'list',
-      name: 'base_path',
-      message: 'Where are your images located?',
+      type: "list",
+      name: "base_path",
+      message: "Where are your images located?",
       choices: [
-        { name: 'In the current directory', value: 0 },
-        { name: 'Somewhere else on my computer', value: 1 },
+        { name: "In the current directory", value: 0 },
+        { name: "Somewhere else on my computer", value: 1 },
       ],
     },
   ]);
   if (base_path === 0) {
-    basePath = process.cwd() + '/images/';
+    basePath = process.cwd() + "/images/";
   } else {
     const { file_location } = await inquirer.prompt([
       {
-        type: 'input',
-        name: 'file_location',
-        message: 'Enter the path to your image files (Absolute filepath)',
+        type: "input",
+        name: "file_location",
+        message: "Enter the path to your image files (Absolute filepath)",
       },
     ]);
     let lastChar = file_location.slice(-1);
-    if (lastChar === '/') basePath = file_location;
-    else basePath = file_location + '/';
+    if (lastChar === "/") basePath = file_location;
+    else basePath = file_location + "/";
   }
   config.basePath = basePath;
 }
@@ -162,29 +162,29 @@ async function getOutputPath() {
   }
   const { output_path } = await inquirer.prompt([
     {
-      type: 'list',
-      name: 'output_path',
-      message: 'Where should the generated images be exported?',
+      type: "list",
+      name: "output_path",
+      message: "Where should the generated images be exported?",
       choices: [
-        { name: 'In the current directory', value: 0 },
-        { name: 'Somewhere else on my computer', value: 1 },
+        { name: "In the current directory", value: 0 },
+        { name: "Somewhere else on my computer", value: 1 },
       ],
     },
   ]);
   if (output_path === 0) {
-    outputPath = process.cwd() + '/output/';
+    outputPath = process.cwd() + "/output/";
   } else {
     const { file_location } = await inquirer.prompt([
       {
-        type: 'input',
-        name: 'file_location',
+        type: "input",
+        name: "file_location",
         message:
-          'Enter the path to your output_old directory (Absolute filepath)',
+          "Enter the path to your output_old directory (Absolute filepath)",
       },
     ]);
     let lastChar = file_location.slice(-1);
-    if (lastChar === '/') outputPath = file_location;
-    else outputPath = file_location + '/';
+    if (lastChar === "/") outputPath = file_location;
+    else outputPath = file_location + "/";
   }
   config.outputPath = outputPath;
 }
@@ -193,10 +193,10 @@ async function checkForDuplicates() {
   if (config.deleteDuplicates !== null) return;
   let { checkDuplicates } = await inquirer.prompt([
     {
-      type: 'confirm',
-      name: 'checkDuplicates',
+      type: "confirm",
+      name: "checkDuplicates",
       message:
-        'Should duplicated images be deleted? (Might result in less images then expected)',
+        "Should duplicated images be deleted? (Might result in less images then expected)",
     },
   ]);
   config.deleteDuplicates = checkDuplicates;
@@ -206,9 +206,9 @@ async function generateMetadataPrompt() {
   if (config.generateMetadata !== null) return;
   let { createMetadata } = await inquirer.prompt([
     {
-      type: 'confirm',
-      name: 'createMetadata',
-      message: 'Should metadata be generated?',
+      type: "confirm",
+      name: "createMetadata",
+      message: "Should metadata be generated?",
     },
   ]);
   config.generateMetadata = createMetadata;
@@ -218,32 +218,32 @@ async function metadataSettings() {
   if (Object.keys(config.metaData).length !== 0) return;
   let responses = await inquirer.prompt([
     {
-      type: 'input',
-      name: 'metadataName',
-      message: 'What should be the name? (Generated format is NAME#ID)',
+      type: "input",
+      name: "metadataName",
+      message: "What should be the name? (Generated format is NAME#ID)",
     },
     {
-      type: 'input',
-      name: 'metadataDescription',
-      message: 'What should be the description?',
+      type: "input",
+      name: "metadataDescription",
+      message: "What should be the description?",
     },
     {
-      type: 'input',
-      name: 'metadataImageUrl',
-      message: 'What should be the image url? (Generated format is URL/ID)',
+      type: "input",
+      name: "metadataImageUrl",
+      message: "What should be the image url? (Generated format is URL/ID)",
     },
     {
-      type: 'confirm',
-      name: 'splitFiles',
-      message: 'Should JSON metadata be split in multiple files?',
+      type: "confirm",
+      name: "splitFiles",
+      message: "Should JSON metadata be split in multiple files?",
     },
   ]);
   config.metaData.name = responses.metadataName;
   config.metaData.description = responses.metadataDescription;
   config.metaData.splitFiles = responses.splitFiles;
   let lastChar = responses.metadataImageUrl.slice(-1);
-  if (lastChar === '/') config.imageUrl = responses.metadataImageUrl;
-  else config.imageUrl = responses.metadataImageUrl + '/';
+  if (lastChar === "/") config.imageUrl = responses.metadataImageUrl;
+  else config.imageUrl = responses.metadataImageUrl + "/";
 }
 
 //SELECT THE ORDER IN WHICH THE TRAITS SHOULD BE COMPOSITED
@@ -253,12 +253,12 @@ async function traitsOrder(isFirst) {
     return;
   }
   const traitsPrompt = {
-    type: 'list',
-    name: 'selected',
+    type: "list",
+    name: "selected",
     choices: [],
   };
-  traitsPrompt.message = 'Which trait should be on top of that?';
-  if (isFirst === true) traitsPrompt.message = 'Which trait is the background?';
+  traitsPrompt.message = "Which trait should be on top of that?";
+  if (isFirst === true) traitsPrompt.message = "Which trait is the background?";
   traitsToSort.forEach((trait) => {
     const globalIndex = traits.indexOf(trait);
     traitsPrompt.choices.push({
@@ -280,12 +280,12 @@ async function customNamesPrompt() {
   if (config.useCustomNames !== null) return;
   let { useCustomNames } = await inquirer.prompt([
     {
-      type: 'list',
-      name: 'useCustomNames',
-      message: 'How should be constructed the names of the traits?',
+      type: "list",
+      name: "useCustomNames",
+      message: "How should be constructed the names of the traits?",
       choices: [
-        { name: 'Use filenames as traits names', value: 0 },
-        { name: 'Choose custom names for each trait', value: 1 },
+        { name: "Use filenames as traits names", value: 0 },
+        { name: "Choose custom names for each trait", value: 1 },
       ],
     },
   ]);
@@ -297,9 +297,9 @@ async function customUniqueTraitsPrompt() {
   if (config.numberOfUniqueImages !== null) return;
   let { numberOfUniqueImages } = await inquirer.prompt([
     {
-      type: 'input',
-      name: 'numberOfUniqueImages',
-      message: 'How many unique traits should be generated?',
+      type: "input",
+      name: "numberOfUniqueImages",
+      message: "How many unique traits should be generated?",
       default: 1,
     },
   ]);
@@ -311,9 +311,9 @@ async function customStartIdPrompt() {
   if (config.startId !== null && config.startId != undefined) return;
   let { startId } = await inquirer.prompt([
     {
-      type: 'input',
-      name: 'startId',
-      message: 'What should be the starting ID number?',
+      type: "input",
+      name: "startId",
+      message: "What should be the starting ID number?",
       default: 0,
     },
   ]);
@@ -329,21 +329,21 @@ async function setNames(trait) {
     files.forEach((file, i) => {
       if (config.names && config.names[file] !== undefined) return;
       namePrompt.push({
-        type: 'input',
-        name: trait + '_name_' + i,
-        message: 'What should be the name of the trait shown in ' + file + '?',
+        type: "input",
+        name: trait + "_name_" + i,
+        message: "What should be the name of the trait shown in " + file + "?",
       });
     });
     const selectedNames = await inquirer.prompt(namePrompt);
     files.forEach((file, i) => {
       if (config.names && config.names[file] !== undefined) return;
-      names[file] = selectedNames[trait + '_name_' + i];
+      names[file] = selectedNames[trait + "_name_" + i];
     });
     config.names = { ...config.names, ...names };
   } else {
-    const files = fs.readdirSync(basePath + '/' + trait);
+    const files = fs.readdirSync(basePath + "/" + trait);
     files.forEach((file, i) => {
-      names[file] = file.split('.')[0];
+      names[file] = file.split(".")[0];
     });
   }
 }
@@ -361,15 +361,15 @@ async function setWeights(trait) {
   const weightPrompt = [];
   files.forEach((file, i) => {
     weightPrompt.push({
-      type: 'input',
-      name: names[file] + '_weight',
-      message: 'How many ' + names[file] + ' ' + trait + ' should there be?',
+      type: "input",
+      name: names[file] + "_weight",
+      message: "How many " + names[file] + " " + trait + " should there be?",
       default: parseInt(Math.round(10000 / files.length)),
     });
   });
   const selectedWeights = await inquirer.prompt(weightPrompt);
   files.forEach((file, i) => {
-    weights[file] = selectedWeights[names[file] + '_weight'];
+    weights[file] = selectedWeights[names[file] + "_weight"];
   });
   config.weights = weights;
 }
@@ -411,7 +411,7 @@ async function generateImages() {
         let pickedImgId = pickRandom(weightedTraits[id]);
         picked.push(pickedImgId);
         let pickedImg = weightedTraits[id][pickedImgId];
-        images.push(basePath + traits[id] + '/' + pickedImg);
+        images.push(basePath + traits[id] + "/" + pickedImg);
       });
 
       if (
@@ -430,10 +430,10 @@ async function generateImages() {
         seen.push(images);
         // const b64 = await mergeImages(images, { Canvas: Canvas, Image: Image });
         // await ImageDataURI.outputFile(b64, outputPath + `${id}.png`);
-        if(!config.isTest){
+        if (!config.metaData.isTest || config.metaData.isTest == false) {
           await compositeImage(images, id);
         }
-  
+
         images = [];
         id++;
       }
@@ -445,7 +445,7 @@ async function generateImages() {
     ) {
       order.forEach((id) => {
         images.push(
-          basePath + traits[id] + '/' + pickRandomAndRemove(weightedTraits[id])
+          basePath + traits[id] + "/" + pickRandomAndRemove(weightedTraits[id])
         );
       });
       generateMetadataObject(id, images);
@@ -474,7 +474,7 @@ async function generateGifs() {
         let pickedImgId = pickRandom(weightedTraits[id]);
         picked.push(pickedImgId);
         let pickedImg = weightedTraits[id][pickedImgId];
-        images.push(basePath + traits[id] + '/' + pickedImg);
+        images.push(basePath + traits[id] + "/" + pickedImg);
       });
 
       if (
@@ -502,7 +502,7 @@ async function generateGifs() {
     ) {
       order.forEach((id) => {
         images.push(
-          basePath + traits[id] + '/' + pickRandomAndRemove(weightedTraits[id])
+          basePath + traits[id] + "/" + pickRandomAndRemove(weightedTraits[id])
         );
       });
       generateMetadataObject(id, images);
@@ -571,15 +571,15 @@ function existCombinationCustomUnique(contains) {
 
 function generateMetadataObject(id, images) {
   metaData[id] = {
-    name: config.metaData.name + '#' + id,
+    name: config.metaData.name + "#" + id,
     description: config.metaData.description,
     image: config.imageUrl + id,
     attributes: [],
   };
   images.forEach((image, i) => {
-    let pathArray = image.split('/');
+    let pathArray = image.split("/");
     let fileToMap = pathArray[pathArray.length - 1];
-    if (!names[fileToMap].includes('REDACTED')) {
+    if (!names[fileToMap].includes("REDACTED")) {
       metaData[id].attributes.push({
         trait_type: traits[order[i]],
         value: names[fileToMap],
@@ -590,7 +590,7 @@ function generateMetadataObject(id, images) {
 
 async function writeMetadata() {
   if (config.metaData.splitFiles) {
-    let metadata_output_dir = outputPath + 'metadata/';
+    let metadata_output_dir = outputPath + "metadata/";
     if (!fs.existsSync(metadata_output_dir)) {
       fs.mkdirSync(metadata_output_dir, { recursive: true });
     }
@@ -598,35 +598,48 @@ async function writeMetadata() {
       await writeFile(metadata_output_dir + key, JSON.stringify(metaData[key]));
     }
   } else {
-    await writeFile(outputPath + 'metadata.json', JSON.stringify(metaData));
+    await writeFile(outputPath + "metadata.json", JSON.stringify(metaData));
   }
 }
 
 async function loadConfig() {
   try {
-    const data = await readFile('config.json');
+    const data = await readFile("config.json");
     config = JSON.parse(data.toString());
   } catch (error) {}
 }
 
 async function writeConfig() {
-  await writeFile('config.json', JSON.stringify(config, null, 2));
+  await writeFile("config.json", JSON.stringify(config, null, 2));
 }
 
 async function getFilesForTrait(trait) {
-  return (await readdir(basePath + '/' + trait)).filter(
-    (file) => file !== '.DS_Store'
+  return (await readdir(basePath + "/" + trait)).filter(
+    (file) => file !== ".DS_Store"
   );
 }
 
 const compositeImage = async (images, id) => {
   let inputArray = [];
   for (var i = 1; i < images.length; i++) {
-    inputArray.push({ input: `${images[i]}` });
+    if (config.metaData.extension == "gif") {
+      inputArray.push({ input: `${images[i]}`, animated: true });
+    } else {
+      inputArray.push({ input: `${images[i]}` });
+    }
   }
-  await sharp(`${images[0]}`)
-    .composite(inputArray)
-    .toFile(
-      outputPath + `${id}.${config.extension ? config.extension : 'png'}`
-    );
+  try{
+    await sharp(`${images[0]}`, {
+      animated: config.metaData.extension == "gif" ? true : false,
+    })
+      .composite(inputArray)
+      .toFile(
+        outputPath +
+          `${id}.${config.metaData.extension ? config.metaData.extension : "png"}`
+      );
+  }catch(e){
+    let errorData = images.map(x=>x.split("/images/")[1]);
+    console.log(errorData);
+  }
+
 };
