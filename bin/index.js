@@ -30,7 +30,6 @@ let config = {
   generateMetadata: null,
   numberOfUniqueImages: null,
   startId: null,
-  extension: 'png',
 };
 let argv = require('minimist')(process.argv.slice(2));
 
@@ -431,7 +430,10 @@ async function generateImages() {
         seen.push(images);
         // const b64 = await mergeImages(images, { Canvas: Canvas, Image: Image });
         // await ImageDataURI.outputFile(b64, outputPath + `${id}.png`);
-        await compositeImage(images, id);
+        if(!config.isTest){
+          await compositeImage(images, id);
+        }
+  
         images = [];
         id++;
       }
