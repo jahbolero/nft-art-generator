@@ -597,6 +597,7 @@ async function writeMetadata() {
     for (var key in metaData) {
       await writeFile(metadata_output_dir + key, JSON.stringify(metaData[key]));
     }
+    await writeFile(outputPath + "metadata.json", JSON.stringify(metaData));
   } else {
     await writeFile(outputPath + "metadata.json", JSON.stringify(metaData));
   }
