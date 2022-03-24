@@ -220,7 +220,7 @@ async function metadataSettings() {
     {
       type: "input",
       name: "metadataName",
-      message: "What should be the name? (Generated format is NAME#ID)",
+      message: "What should be the name? (Generated format is NAME #ID)",
     },
     {
       type: "input",
@@ -571,7 +571,7 @@ function existCombinationCustomUnique(contains) {
 
 function generateMetadataObject(id, images) {
   metaData[id] = {
-    name: config.metaData.name + "#" + id,
+    name: config.metaData.name + " #" + id,
     description: config.metaData.description,
     image: config.imageUrl + id,
     attributes: [],
