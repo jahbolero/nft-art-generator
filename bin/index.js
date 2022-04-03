@@ -580,8 +580,10 @@ function generateMetadataObject(id, images) {
     let pathArray = image.split("/");
     let fileToMap = pathArray[pathArray.length - 1];
     if (!names[fileToMap].includes("REDACTED")) {
+      var split = traits[order[i]].split("-");
+      var property = split.length > 0 ? split[1] : split[0];
       metaData[id].attributes.push({
-        trait_type: traits[order[i]],
+        trait_type: property,
         value: names[fileToMap],
       });
     }
