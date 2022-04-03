@@ -540,18 +540,20 @@ function remove(array, toPick) {
 function pairingViolations(contains){
 
   //config.rules;
-  var rules = [[1,2],[3,4,5]]
+  var rules = [["apple","pen"],["dog","cat"]]
 
-  var contains = [3,4]
+  var contains = ["dir/cat","dir/dog"];
   var invalid = false;
   
   for(const rule of rules){
       var violations = 0;
       for(const member of rule){
-          if(contains.includes(member)){
+          if(contains.filter(element=> element.includes(member)).length > 0){
+              console.log(violations)
               violations+=1;
           };
           if(violations >= 2){
+              console.log(violations)
               invalid = true;
               break;
           }
@@ -561,8 +563,7 @@ function pairingViolations(contains){
       }
   }
   
-  return invalid;
-}
+  return(invalid);
 
 function existCombination(contains) {
   let exists = false;
