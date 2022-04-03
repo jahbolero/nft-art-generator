@@ -536,6 +536,34 @@ function remove(array, toPick) {
   array.splice(toPick, 1);
 }
 
+//check if a combination violates pairing rules
+function pairingViolations(contains){
+
+  //config.rules;
+  var rules = [[1,2],[3,4,5]]
+
+  var contains = [3,4]
+  var invalid = false;
+  
+  for(const rule of rules){
+      var violations = 0;
+      for(const member of rule){
+          if(contains.includes(member)){
+              violations+=1;
+          };
+          if(violations >= 2){
+              invalid = true;
+              break;
+          }
+      }
+      if(violations >= 2 ){
+        break;
+      }
+  }
+  
+  return invalid;
+}
+
 function existCombination(contains) {
   let exists = false;
   seen.forEach((array) => {
