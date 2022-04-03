@@ -30,6 +30,7 @@ let config = {
   generateMetadata: null,
   numberOfUniqueImages: null,
   startId: null,
+  totalSupply:null
 };
 let argv = require("minimist")(process.argv.slice(2));
 
@@ -364,7 +365,7 @@ async function setWeights(trait) {
       type: "input",
       name: names[file] + "_weight",
       message: "How many " + names[file] + " " + trait + " should there be?",
-      default: parseInt(Math.round(10000 / files.length)),
+      default: parseInt(Math.round(config.totalSupply !== null && config.totalSupply != undefined ? config.totalSupply : 10000 / files.length)),
     });
   });
   const selectedWeights = await inquirer.prompt(weightPrompt);
