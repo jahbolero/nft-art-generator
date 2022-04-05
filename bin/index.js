@@ -566,6 +566,7 @@ function pairingViolations(contains){
   return(invalid);
 }
 
+
 function existCombination(contains) {
   let exists = false;
   seen.forEach((array) => {
