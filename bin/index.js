@@ -468,7 +468,7 @@ async function generateGifs() {
   if (config.deleteDuplicates) {
     while (
       !Object.values(weightedTraits).filter((arr) => arr.length == 0).length &&
-      noMoreMatches < 20000
+      noMoreMatches < 80000
     ) {
       let picked = [];
       order.forEach((id) => {
@@ -614,7 +614,7 @@ function generateMetadataObject(id, images) {
       var property = split.length > 0 ? split[1] : split[0];
       metaData[id].attributes.push({
         trait_type: property,
-        value: names[fileToMap],
+        value: names[fileToMap].replace(/=.*=/,""),
       });
     }
   });
