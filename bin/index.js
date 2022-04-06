@@ -365,7 +365,7 @@ async function setWeights(trait) {
       type: "input",
       name: names[file] + "_weight",
       message: "How many " + names[file] + " " + trait + " should there be?",
-      default: parseInt(Math.round(config.totalSupply !== null && config.totalSupply != undefined ? config.totalSupply : 10000 / files.length)),
+      default: parseInt((Math.round(config.metaData.totalSupply !== null && config.metaData.totalSupply != undefined ? config.metaData.totalSupply : 10000) / files.length)),
     });
   });
   const selectedWeights = await inquirer.prompt(weightPrompt);
@@ -392,7 +392,10 @@ async function generateWeightedTraits() {
         traitWeights.push(file);
       }
     });
-    weightedTraits.push(traitWeights);
+    while(traitWeights.length < parseInt(config.metaData.totalSupply)) {
+      traitWeights.push(traitWeights[Math.floor(Math.random() * traitWeights.length)]);
+    }
+    weightedTraits.push(traitWeights); 
   }
 }
 
@@ -405,7 +408,7 @@ async function generateImages() {
   if (config.deleteDuplicates) {
     while (
       !Object.values(weightedTraits).filter((arr) => arr.length == 0).length &&
-      noMoreMatches < 20000
+      noMoreMatches < 200000
     ) {
       let picked = [];
       order.forEach((id) => {
@@ -538,7 +541,6 @@ function remove(array, toPick) {
 
 //check if a combination violates pairing rules
 function pairingViolations(contains){
-
   //config.rules;
   var rules = config.rules ? config.rules : [];
   var invalid = false;
