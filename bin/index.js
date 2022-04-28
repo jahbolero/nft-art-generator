@@ -540,28 +540,6 @@ function remove(array, toPick) {
 }
 
 //check if a combination violates pairing rules
-function pairingViolations(contains){
-  //config.rules;
-  var rules = config.rules ? config.rules : [];
-  var invalid = false;
-  for(const rule of rules){
-      var violations = 0;
-      for(const member of rule){
-          if(contains.filter(element=> element.includes(member)).length > 0){
-              violations+=1;
-          };
-          if(violations >= 2){
-              invalid = true;
-              break;
-          }
-      }
-      if(violations >= 2 ){
-        break;
-      }
-  }
-  
-  return(invalid);
-}
 
 
 function existCombination(contains) {
@@ -572,9 +550,6 @@ function existCombination(contains) {
       array.every((value, index) => value === contains[index]);
     if (isEqual) exists = true;
   });
-  if(pairingViolations(contains)){
-    exists = true;
-  }
   return exists;
 }
 
